@@ -4,21 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#fce7f3">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <!-- YouTube embeds need a referrer on hosted pages. GitHub Pages supplies one. -->
+  <meta name="referrer" content="origin">
   <meta name="description" content="THINGLEX.US custom profile and links.">
   <title>I love yuri - THINGLEX.US</title>
 
-  <!-- Critical gate styles prevent the profile from flashing before CSS/JS finishes loading. -->
+  <link rel="preconnect" href="https://www.youtube.com">
+  <link rel="preconnect" href="https://www.google.com">
+  <link rel="preconnect" href="https://raw.githubusercontent.com">
+
+  <!-- Prevent the profile from flashing before the local stylesheet loads. -->
   <style>
     html, body { min-height: 100%; margin: 0; background: #fce7f3; }
     body:not(.entered) { overflow: hidden; }
     body:not(.entered) #profile { visibility: hidden; }
-    body.entered #profile { visibility: visible; }
-    body.entered #gate {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
     #gate {
       position: fixed;
       inset: 0;
@@ -33,10 +32,10 @@
     }
   </style>
 
+  <!-- Relative paths work on both username.github.io and project Pages URLs. -->
   <link rel="stylesheet" href="./style.css">
-  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-pink-100 text-pink-950">
+<body>
   <div
     id="gate"
     role="dialog"
@@ -57,69 +56,70 @@
         class="gate-btn"
         id="gateBtn"
         aria-controls="profile"
-        disabled
       >
         <span class="gate-pulse" aria-hidden="true"></span>
-        <span id="gateBtnLabel">Loading audio…</span>
+        <span id="gateBtnLabel">Tap to view</span>
         <span class="gate-arrow" aria-hidden="true">→</span>
       </button>
 
-      <p class="gate-audio-note" id="gateAudioStatus" aria-live="polite">Preparing background audio…</p>
+      <p class="gate-audio-note" id="gateAudioStatus" aria-live="polite">
+        Loading background audio…
+      </p>
     </div>
   </div>
 
-  <main id="profile" tabindex="-1" class="mx-auto max-w-2xl px-6 py-10 text-center">
+  <main id="profile" tabindex="-1" class="profile-shell">
     <header>
-      <h1 class="text-3xl font-bold tracking-tight text-pink-600">THINGLEX.US</h1>
-      <p class="mt-2 text-sm text-pink-950/70">I like eating crayons and hugging sharks :3</p>
+      <h1 class="profile-title">THINGLEX.US</h1>
+      <p class="profile-tagline">I like eating crayons and hugging sharks :3</p>
     </header>
 
-    <figure class="profile-picture mx-auto mt-8 aspect-square w-64 overflow-hidden rounded-2xl ring-4 ring-white/60 shadow-lg shadow-pink-300/30">
+    <figure class="profile-picture">
       <img
         src="https://raw.githubusercontent.com/LeevJeevs/cdn.nextsecret.xyz/refs/heads/main/8831a21e6009b6dfa58e9023e93016f4-609132356.jpg"
-        class="h-full w-full object-cover"
         alt="THINGLEX.US profile picture"
         width="256"
         height="256"
       >
     </figure>
 
-    <section class="mt-10 rounded-2xl border border-pink-200 bg-white/40 p-6 text-left shadow-sm shadow-pink-200/40" aria-labelledby="aboutHeading">
-      <h2 id="aboutHeading" class="text-center text-xl font-semibold text-pink-950">more about me</h2>
+    <section class="about-card" aria-labelledby="aboutHeading">
+      <h2 id="aboutHeading">more about me</h2>
 
-      <div class="mt-5 space-y-4 leading-7">
-        <p class="text-green-500">
-          <strong class="font-semibold">I like to:</strong> compose &amp; produce, play games such as Cat Mail Co., I enjoy building machines such as desktops and laptops :3
+      <div class="about-copy">
+        <p class="like-copy">
+          <strong>I like to:</strong> compose &amp; produce, play games such as Cat Mail Co., I enjoy building machines such as desktops and laptops :3
         </p>
-        <p class="text-blue-500">
-          <strong class="font-semibold">I want to:</strong> Learn every single programming language there is, learn how to ABH in Half-Life 2, earn moneyoney
+        <p class="want-copy">
+          <strong>I want to:</strong> Learn every single programming language there is, learn how to ABH in Half-Life 2, earn moneyoney
         </p>
-        <p class="text-red-500">
-          <strong class="font-semibold">I have:</strong> 5K USD from my past music experience, a dev team (non-profit for now), an insane library of music and such, a homelab, 5 laptops &amp; 3 desktops :P
+        <p class="have-copy">
+          <strong>I have:</strong> 5K USD from my past music experience, a dev team (non-profit for now), an insane library of music and such, a homelab, 5 laptops &amp; 3 desktops :P
         </p>
       </div>
     </section>
 
-    <section class="mt-8" aria-labelledby="linksHeading">
-      <h2 id="linksHeading" class="text-lg font-semibold text-pink-950">find me online</h2>
+    <section class="links-section" aria-labelledby="linksHeading">
+      <h2 id="linksHeading">find me online</h2>
 
-      <nav class="mt-4 flex flex-wrap justify-center gap-3" aria-label="Social links">
-        <a href="https://github.com/leevjeevs" target="_blank" rel="noopener noreferrer" class="social-link rounded-xl bg-slate-800 px-5 py-3 font-medium text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">GitHub</a>
-        <a href="https://steamcommunity.com/id/leevjeevs" target="_blank" rel="noopener noreferrer" class="social-link rounded-xl bg-slate-900 px-5 py-3 font-medium text-white focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">Steam</a>
-        <a href="https://soundcloud.com/thinglexus" target="_blank" rel="noopener noreferrer" class="social-link rounded-xl bg-orange-600 px-5 py-3 font-medium text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2">SoundCloud</a>
-        <a href="https://youtube.com/@thinglexus" target="_blank" rel="noopener noreferrer" class="social-link rounded-xl bg-red-600 px-5 py-3 font-medium text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2">YouTube</a>
-        <a href="https://open.spotify.com/artist/2dS2UtZB6GO0bl4dhWH2dr" target="_blank" rel="noopener noreferrer" class="social-link rounded-xl bg-green-600 px-5 py-3 font-medium text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2">Spotify</a>
-        <a href="https://discord.gg/fBtXpYnRgp" target="_blank" rel="noopener noreferrer" class="social-link rounded-xl bg-indigo-500 px-5 py-3 font-medium text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Discord</a>
+      <nav class="social-links" aria-label="Social links">
+        <a href="https://github.com/leevjeevs" target="_blank" rel="noopener noreferrer" class="social-link github-link">GitHub</a>
+        <a href="https://steamcommunity.com/id/leevjeevs" target="_blank" rel="noopener noreferrer" class="social-link steam-link">Steam</a>
+        <a href="https://soundcloud.com/thinglexus" target="_blank" rel="noopener noreferrer" class="social-link soundcloud-link">SoundCloud</a>
+        <a href="https://youtube.com/@thinglexus" target="_blank" rel="noopener noreferrer" class="social-link youtube-link">YouTube</a>
+        <a href="https://open.spotify.com/artist/2dS2UtZB6GO0bl4dhWH2dr" target="_blank" rel="noopener noreferrer" class="social-link spotify-link">Spotify</a>
+        <a href="https://discord.gg/fBtXpYnRgp" target="_blank" rel="noopener noreferrer" class="social-link discord-link">Discord</a>
       </nav>
     </section>
 
+    <!-- Kept at a real rendered size and moved off-screen in CSS for iframe reliability. -->
     <div id="bgAudio" aria-hidden="true"></div>
 
     <button
       id="soundToggle"
       type="button"
       disabled
-      aria-label="Unmute background audio"
+      aria-label="Background audio unavailable"
       aria-pressed="false"
       class="sound-toggle muted"
     >
@@ -145,6 +145,6 @@
     </style>
   </noscript>
 
-  <script src="./script.js"></script>
+  <script src="./script.js" defer></script>
 </body>
 </html>

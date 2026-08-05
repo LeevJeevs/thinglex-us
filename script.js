@@ -2,9 +2,8 @@
     "use strict";
 
     const VIDEO_ID = "41htVtnDPxw";
-    const GATE_ENABLED = true;
     const AUDIO_LOAD_TIMEOUT_MS = 12000;
-    const IS_WEB_PAGE = location.protocol === "http:" || location.protocol === "https:";
+    const IS_HOSTED_PAGE = location.protocol === "http:" || location.protocol === "https:";
 
     const gate = document.getElementById("gate");
     const gateButton = document.getElementById("gateBtn");
@@ -19,7 +18,7 @@
     let entered = false;
     let audioLoadTimer = null;
 
-    function setGateState({ enabled, label, status }) {
+    function setGateState({ enabled = true, label, status }) {
         if (gateButton) {
             gateButton.disabled = !enabled;
         }
@@ -71,9 +70,6 @@
 
         if (gate) {
             gate.setAttribute("aria-hidden", "true");
-            gate.style.opacity = "0";
-            gate.style.visibility = "hidden";
-            gate.style.pointerEvents = "none";
         }
 
         window.setTimeout(() => {
@@ -91,19 +87,14 @@
 
     function enter() {
         if (entered) return;
+        entered = true;
 
-        if (!playerReady && !playerFailed) {
-            setGateState({
-                enabled: false,
-                label: "Loading audio…",
-                status: "The background audio is still preparing…"
-            });
-            return;
+        if (gateButton) {
+            gateButton.disabled = true;
         }
 
-        entered = true;
-        if (gateButton) gateButton.disabled = true;
-
+        // Playback starts here only when YouTube finished loading before the click.
+        // Otherwise the site still opens and the sound button becomes usable later.
         if (playerReady) {
             startPlaybackFromGesture();
         }
@@ -142,11 +133,14 @@
         }
 
         updateSoundButton(true, false);
-        setGateState({
-            enabled: true,
-            label: "Tap to view",
-            status: message || "Background audio could not load, but you can still enter."
-        });
+
+        if (!entered) {
+            setGateState({
+                enabled: true,
+                label: "Tap to view",
+                status: message || "Background audio is unavailable, but the page still works."
+            });
+        }
     }
 
     function createYouTubePlayer() {
@@ -154,7 +148,7 @@
 
         const container = document.getElementById("bgAudio");
         if (!container) {
-            markPlayerUnavailable("Background audio container is missing, but you can still enter.");
+            markPlayerUnavailable("Background audio is unavailable, but the page still works.");
             return;
         }
 
@@ -192,18 +186,22 @@
                         const iframe = event.target.getIframe();
                         iframe.setAttribute("allow", "autoplay; encrypted-media");
                         iframe.setAttribute("title", "Background music player");
-                        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+                        iframe.referrerPolicy = "origin";
                     } catch (_) {
-                        // Optional attributes only.
+                        // These attributes are optional enhancements.
                     }
 
                     event.target.setVolume(70);
+                    event.target.mute();
                     updateSoundButton(true, true);
-                    setGateState({
-                        enabled: true,
-                        label: "Tap to view",
-                        status: "Background audio is ready."
-                    });
+
+                    if (!entered) {
+                        setGateState({
+                            enabled: true,
+                            label: "Tap to view",
+                            status: "Background audio is ready."
+                        });
+                    }
                 },
 
                 onStateChange(event) {
@@ -226,21 +224,23 @@
 
                     if (event.data === 153) {
                         markPlayerUnavailable(
-                            "YouTube did not receive a website referrer. Open this through run-site.bat/run-site.sh or upload it to your web host."
+                            "YouTube or the browser blocked the background audio. You can still enter."
                         );
                         return;
                     }
 
-                    markPlayerUnavailable(`Background audio failed to load (YouTube error ${event.data}). You can still enter.`);
+                    markPlayerUnavailable(
+                        `Background audio failed to load (YouTube error ${event.data}). You can still enter.`
+                    );
                 }
             }
         });
     }
 
     function loadYouTubeAPI() {
-        if (!IS_WEB_PAGE) {
+        if (!IS_HOSTED_PAGE) {
             markPlayerUnavailable(
-                "Local-file previews cannot identify the site to YouTube. Start run-site.bat/run-site.sh, then open the localhost address."
+                "Background audio needs an http(s) page. The rest of the site still works locally."
             );
             return;
         }
@@ -262,38 +262,31 @@
             const apiScript = document.createElement("script");
             apiScript.src = "https://www.youtube.com/iframe_api";
             apiScript.async = true;
-            apiScript.referrerPolicy = "strict-origin-when-cross-origin";
+            apiScript.referrerPolicy = "origin";
             apiScript.onerror = () => {
-                markPlayerUnavailable("YouTube could not be reached, but you can still enter.");
+                markPlayerUnavailable("YouTube could not be reached. You can still enter.");
             };
             document.head.appendChild(apiScript);
         }
 
         audioLoadTimer = window.setTimeout(() => {
-            if (!playerReady) {
-                markPlayerUnavailable("Background audio took too long to load, but you can still enter.");
+            if (!playerReady && !playerFailed) {
+                markPlayerUnavailable("Background audio took too long to load. You can still enter.");
             }
         }, AUDIO_LOAD_TIMEOUT_MS);
     }
 
-    if (GATE_ENABLED && gate) {
-        profile?.setAttribute("aria-hidden", "true");
-        setGateState({
-            enabled: false,
-            label: "Loading audio…",
-            status: "Preparing background audio…"
-        });
+    profile?.setAttribute("aria-hidden", "true");
+    setGateState({
+        enabled: true,
+        label: "Tap to view",
+        status: "Loading background audio…"
+    });
 
-        gateButton?.addEventListener("click", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            enter();
-        });
-    } else {
-        entered = true;
-        document.body.classList.add("entered");
-        gate?.remove();
-    }
+    gateButton?.addEventListener("click", (event) => {
+        event.preventDefault();
+        enter();
+    });
 
     soundButton?.addEventListener("click", toggleSound);
     updateSoundButton(true, false);
