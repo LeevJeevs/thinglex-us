@@ -48,5 +48,72 @@
         </div>
       </section>
     </body>
+    <iframe id="bgAudio" src="https://www.youtube-nocookie.com/embed/41htVtnDPxw?autoplay=0&mute=1&loop=1&playlist=41htVtnDPxw&controls=0&modestbranding=1&enablejsapi=1&playsinline=1&disablekb=1" style="position:fixed;bottom:0;right:0;width:2px;height:2px;opacity:0;pointer-events:none;border:0;" allow="autoplay" title=""></iframe>
+      <button id="soundToggle" aria-label="Toggle background audio" class="sound-toggle muted">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="4 8 9 8 13 4 13 20 9 16 4 16 4 8"></polygon>
+          <path class="sound-wave" d="M17 8a5 5 0 0 1 0 8"></path>
+        </svg>
+      </button>
+
+    <div id="gate">
+      <div class="gate-inner">
+        <div class="gate-badge">custom profile</div>
+        <p class="gate-note">This website is AI SLOP! I say no to it (even though I DID just make a profile within it, SHUSH!)</p>
+        <button type="button" class="gate-btn" id="gateBtn">
+          <span class="gate-pulse"></span> Tap to view
+        </button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var GATE_ENABLED = true;
+        var gate = document.getElementById('gate');
+        var gateBtn = document.getElementById('gateBtn');
+        var iframe = document.getElementById('bgAudio');
+        var soundBtn = document.getElementById('soundToggle');
+        var muted = true;
+        var entered = false;
+
+        function sendYT(func) {
+          if (!iframe || !iframe.contentWindow) return;
+          iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: [] }), 'https://www.youtube-nocookie.com');
+        }
+
+        function enter(userGesture) {
+          if (entered) return;
+          entered = true;
+          document.body.classList.add('entered');
+          if (iframe && userGesture) {
+            // This runs directly inside a real click handler, a genuine user gesture,
+            // so the browser allows starting playback with sound here.
+            sendYT('playVideo');
+            setTimeout(function () {
+              muted = false;
+              sendYT('unMute');
+              if (soundBtn) soundBtn.classList.remove('muted');
+            }, 250);
+          }
+        }
+
+        if (GATE_ENABLED && gate) {
+          gate.addEventListener('click', function () { enter(true); });
+          if (gateBtn) gateBtn.addEventListener('click', function (e) { e.stopPropagation(); enter(true); });
+        } else {
+          // No gate: reveal the card immediately and let the iframe's own
+          // autoplay=1&mute=1 params start the (silent) music right away.
+          enter(false);
+        }
+
+        if (soundBtn) {
+          soundBtn.addEventListener('click', function () {
+            muted = !muted;
+            sendYT(muted ? 'mute' : 'unMute');
+            soundBtn.classList.toggle('muted', muted);
+          });
+        }
+      })();
+    </script>
   </main>
 </html>
