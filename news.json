@@ -7,16 +7,10 @@
       "body": "You can now browse public rooms, filter by tag and region, and join with a code.\nHost migration is still being tested."
     },
     {
-      "title": "Voice chat added",
-      "date": "2026-11-15",
-      "type": "update",
-      "body": "Proximity voice is in. You hear other players from their head."
-    },
-    {
-      "title": "Welcome to Monke Game",
+      "title": "VC added",
       "date": "2026-11-14",
-      "type": "news",
-      "body": "Thanks for playing the early build! Tell us what you think."
+      "type": "update",
+      "body": "That's really it. \nAdded MetaVoiceChat by Metater & Netcode for GameObjects by Unity Technologies."
     }
   ]
 }
